@@ -155,6 +155,76 @@ class ClassicLaminate(Geowriter):
             o.write('Physical Surface(4) = {4};')
             o.write('Physical Surface(5) = {5};')
 
+class AngledLaminate(Geowriter):
+    def __init__(self, l, h1, h2, a1, a2, dh, cm, fm, filename = 'perlinlaminate.geo'):
+        super().__init__()
+        self.file = filename
+        
+        alpha1 = a1 * (np.pi / 180.0)
+        alpha2 = a2 * (np.pi / 180.0)
+
+        dh1 = np.tan(alpha1) * l
+        dh2 = np.tan(alpha2) * l
+
+        with open(filename, 'w') as o:
+            o.write('//foo\n')
+
+
+        p1 = self.writepoint([0.0, 0.0], cm)
+        p2 = self.writepoint([l, 0.0], cm)
+        p3 = self.writepoint([0.0, h1], fm)
+        p4 = self.writepoint([l, h1 + dh1], fm)
+
+        l1 = self.writeline(p1, p2)
+        l2 = self.writeline(p1, p3)
+        l3 = self.writeline(p2, p4)
+        l4 = self.writeline(p3, p4)
+
+        ll1 = self.writelineloop([l1, l3, -l4, -l2])
+
+        p5 = self.writepoint([0.0, h1 +dh], fm)
+        p6 = self.writepoint([l, h1 + dh + dh1], fm)
+
+        l5 = self.writeline(p3, p5)
+        l6 = self.writeline(p4, p6)
+        l7 = self.writeline(p5, p6)
+
+        ll2 = self.writelineloop([l4, l6, -l7, -l5])
+
+        p7 = self.writepoint([0.0, h1 + h2 -dh], fm)
+        p8 = self.writepoint([l, h1 + h2 -dh + dh2], fm)
+        
+        l8 = self.writeline(p5, p7)
+        l9 = self.writeline(p6, p8)
+        l10 = self.writeline(p7, p8)
+        
+        ll3 = self.writelineloop([l7, l9, -l10, -l8])
+    
+        p9  = self.writepoint([0.0, h1 + h2], fm)
+        p10 = self.writepoint([l, h1 + h2 + dh2], fm)
+
+        l11 = self.writeline(p7, p9)
+        l12 = self.writeline(p8, p10)
+        l13 = self.writeline(p9, p10)
+
+        ll4 = self.writelineloop([l10, l12, -l13, -l11])
+
+        p11 = self.writepoint([0.0, 2.0 * h1 + h2], cm)
+        p12 = self.writepoint([l, 2.0 * h1 + h2], cm)
+
+        l14 = self.writeline(p9, p11)
+        l15 = self.writeline(p10, p12)
+        l16 = self.writeline(p11, p12)
+
+        ll5 = self.writelineloop([l13, l15, -l16, -l14])
+
+        with open(filename, 'a') as o:
+            o.write('Physical Surface(1) = {1};')
+            o.write('Physical Surface(2) = {2};')
+            o.write('Physical Surface(3) = {3};')
+            o.write('Physical Surface(4) = {4};')
+            o.write('Physical Surface(5) = {5};')
+
 
 class PerlinLaminate(Geowriter):
     def __init__(self, S1 ,S2 ,h1 ,h2 ,cm ,fm ,dh ,filename = 'perlinlaminate.geo'):
@@ -369,6 +439,30 @@ if opt['Typ'] == 'Rect':
     
     test = ClassicLaminate(l, h1, h2, dh, cm, fm, filename = name)
 
+elif opt['Typ'] == 'Angled':
+    print ('Typ: Angled')
+    name = opt['name']
+    if '.geo' not in name:
+        name = name +'.geo'
+    print ('Dateiname '+ name + '.geo')
+    l = opt['Laenge']
+    print ('Laenge: %f' % (l))
+    h1 = opt['Hoehe1']
+    print ('Hoehe der aeusseren Schichten: %f' % (h1))
+    h2 = opt['Hoehe2']
+    print ('Hoehe der inneren Schicht: %f' % (h1))
+    alpha1 = opt['alpha1']
+    print ('Winkel der unteren Schicht')
+    alpha2 = opt['alpha2']
+    print ('Winkel der oberen Schicht')
+    fm = opt['finemesh']
+    print ('Feine Vernetzung: %f' % (fm))
+    cm = opt['coarsemesh']
+    print ('Grobe Vernetzung: %f' % (cm))
+    dh = opt['h_interface']
+    print ('Hoehe der Grenzfläche: %f' % (dh))
+    
+    test = AngledLaminate(l, h1, h2, alpha1, alpha2, dh, cm, fm, filename = name)
 elif opt['Typ'] == 'Curved':
     name = opt['name']
     print ('Dateiname '+ name + '.geo')

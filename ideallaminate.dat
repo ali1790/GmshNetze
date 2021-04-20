@@ -2,7 +2,7 @@
 name = mylaminate
 # Art der Topologie
 #	Curved: Laminat mit Kreisboegen als Grenzflächen
-Typ = Angled
+Typ = Rect
 #Laenge des Laminats:
 Laenge = 3.0
 # Hoehe der auesseren Schichten:
@@ -15,8 +15,5 @@ finemesh = 0.1
 coarsemesh = 0.1
 # Hoehe der Grenzflaechen
 h_interface = .01
-# Winkel der unteren Schicht
-alpha1 = 5.0
-# Winkel der oberen Schicht
-alpha2 = -5.0
+
 
