@@ -1,0 +1,23 @@
+#Name des Laminats
+name = mylaminate
+# Art der Topologie
+#	Curved: Laminat mit Kreisboegen als Grenzflächen
+Typ = Curved
+#Laenge des Laminats:
+Laenge = 3.0
+# Hoehe der auesseren Schichten:
+Hoehe1 = 1.0
+# Hoehe der inneren Schicht:
+Hoehe2 = 1.0
+# Maximale Abweichung an der unteren Grenzflaeche
+h1 = 0.1
+# Maximale Abweichung an der oberen Grenzflaeche
+h2 = 0.1
+# Vernetzung an den Grenzflaechen
+finemesh = 0.1
+# Vernetzung and den auesseren Ecken
+coarsemesh = 0.1
+# Hoehe der Grenzflaechen
+h_interface = .01
+
+
