@@ -446,12 +446,13 @@ def choosefiles():
 files = choosefiles()
 for f in files:
     opt = readoptions(f)
+    print ('-----------------------------------------')
     if opt['Typ'] == 'Rect':
         print ('Typ: Rect')
         name = opt['name']
         if '.geo' not in name:
             name = name +'.geo'
-        print ('Dateiname '+ name)
+        print ('Dateiname: '+ name)
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
         h1 = opt['Hoehe1']
@@ -472,7 +473,7 @@ for f in files:
         name = opt['name']
         if '.geo' not in name:
             name = name +'.geo'
-        print ('Dateiname '+ name)
+        print ('Dateiname: '+ name)
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
         h1 = opt['Hoehe1']
@@ -495,7 +496,7 @@ for f in files:
         name = opt['name']
         if '.geo' not in name:
             name = name +'.geo'
-        print ('Dateiname '+ name)
+        print ('Dateiname: '+ name)
         print ('Typ: Curved')
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
