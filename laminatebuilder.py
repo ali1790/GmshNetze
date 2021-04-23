@@ -219,11 +219,11 @@ class AngledLaminate(Geowriter):
         ll5 = self.writelineloop([l13, l15, -l16, -l14])
 
         with open(filename, 'a') as o:
-            o.write('Physical Surface(1) = {1};')
-            o.write('Physical Surface(2) = {2};')
-            o.write('Physical Surface(3) = {3};')
-            o.write('Physical Surface(4) = {4};')
-            o.write('Physical Surface(5) = {5};')
+            o.write('Physical Surface(1) = {1};\n')
+            o.write('Physical Surface(2) = {2};\n')
+            o.write('Physical Surface(3) = {3};\n')
+            o.write('Physical Surface(4) = {4};\n')
+            o.write('Physical Surface(5) = {5};\n')
 
 
 class PerlinLaminate(Geowriter):
@@ -300,6 +300,13 @@ class PerlinLaminate(Geowriter):
         l2 = self.writeline(p1, p2)
         l3 = self.writeline(interfacepoints2a[-1], p2)
         ll3 = self.writelineloop(interfacelines2a + [l3, -l2, -l1])
+        
+        with open(filename, 'a') as o:
+            o.write('Physical Surface(1) = {1};\n')
+            o.write('Physical Surface(2) = {2};\n')
+            o.write('Physical Surface(3) = {3};\n')
+            o.write('Physical Surface(4) = {4};\n')
+            o.write('Physical Surface(5) = {5};\n')
 
 class CurvedLaminate(Geowriter):
     def __init__(self ,l , h1 ,h2 ,dh1 ,dh2 ,cm ,fm ,dh ,filename = 'curvedlaminate.geo'):
@@ -396,6 +403,13 @@ class CurvedLaminate(Geowriter):
 
         ll4 = self.writelineloop([l16, l17, l19, -l20, -l18])
 
+        with open(filename, 'a') as o:
+            o.write('Physical Surface(1) = {1};\n')
+            o.write('Physical Surface(2) = {2};\n')
+            o.write('Physical Surface(3) = {3};\n')
+            o.write('Physical Surface(4) = {4};\n')
+            o.write('Physical Surface(5) = {5};\n')
+
 def isfloat(val):
     try:
         float(val)
@@ -427,7 +441,7 @@ def choosefiles():
     if choice == 0:
         return allfiles
     else:
-        return [allfiles[choice]]
+        return [allfiles[choice - 1]]
 
 files = choosefiles()
 for f in files:
@@ -437,7 +451,7 @@ for f in files:
         name = opt['name']
         if '.geo' not in name:
             name = name +'.geo'
-        print ('Dateiname '+ name + '.geo')
+        print ('Dateiname '+ name)
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
         h1 = opt['Hoehe1']
@@ -458,7 +472,7 @@ for f in files:
         name = opt['name']
         if '.geo' not in name:
             name = name +'.geo'
-        print ('Dateiname '+ name + '.geo')
+        print ('Dateiname '+ name)
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
         h1 = opt['Hoehe1']
@@ -479,7 +493,9 @@ for f in files:
         test = AngledLaminate(l, h1, h2, alpha1, alpha2, dh, cm, fm, filename = name)
     elif opt['Typ'] == 'Curved':
         name = opt['name']
-        print ('Dateiname '+ name + '.geo')
+        if '.geo' not in name:
+            name = name +'.geo'
+        print ('Dateiname '+ name)
         print ('Typ: Curved')
         l = opt['Laenge']
         print ('Laenge: %f' % (l))
@@ -498,3 +514,6 @@ for f in files:
         dh = opt['h_interface']
         print ('Hoehe der Grenzfläche: %f' % (dh))
         test = CurvedLaminate(l, h1, h2, dh1, dh2, cm, fm, dh, filename = name)
+
+with open(name , 'a') as o:
+    o.write('Mesh 1;\nMesh 2;\nSave \"' +  opt['name'].split('.')[0]+'.m\";\n' )
