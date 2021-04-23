@@ -29,7 +29,7 @@ class Geowriter():
                 print ('gmsh ist installiert')
                 self.gmsh_inst = True
             else:
-                sys.exit('gmsh ist weder installiert noch verlinkt')
+                print('gmsh ist weder installiert noch verlinkt')
 
     def mesh(self):
         if self.gmsh_link:
