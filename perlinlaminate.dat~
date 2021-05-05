@@ -1,0 +1,27 @@
+#Name des Laminats
+name = perlinlaminate
+# Art der Topologie
+#	Curved: Laminat mit Kreisboegen als Grenzflächen
+Typ = Perlin
+#Laenge des Laminats:
+Laenge = 3.0
+# Hoehe der auesseren Schichten:
+Hoehe1 = 1.0
+# Hoehe der inneren Schicht:
+Hoehe2 = 1.0
+# Anzahl der Punkte ueber die Laenge
+npoints = 100
+# Anzahl der Oktaven (Ueberlagerungen)
+noct = 4
+# Einflussfaktor der naechsten Oktave (Persistenz)
+pers = 0.5
+# Maximale Hoehe der Rauhigkeit
+hmax = 0.1
+# Vernetzung an den Grenzflaechen
+finemesh = .1
+# Vernetzung and den auesseren Ecken
+coarsemesh = 0.1
+# Hoehe der Grenzflaechen
+h_interface = .01
+
+

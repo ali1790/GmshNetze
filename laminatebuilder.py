@@ -81,9 +81,10 @@ class Geowriter():
 
     @staticmethod
     def createperlin(npoints, l, noct, pers, hmax):
+        noct = int(noct)
         ran = int(random.random() * l)
         x = np.linspace(ran, ran + l, num = npoints)
-        signal = np.zeros(npoints)
+        signal = np.zeros(int(npoints))
         for ctr, t in enumerate(x):
             signal[ctr] = pnoise1(t, octaves = noct, persistence = pers)
         scalefactor = hmax / max([max(signal), abs(min(signal))])
@@ -458,7 +459,7 @@ for f in files:
         h1 = opt['Hoehe1']
         print ('Hoehe der aeusseren Schichten: %f' % (h1))
         h2 = opt['Hoehe2']
-        print ('Hoehe der inneren Schicht: %f' % (h1))
+        print ('Hoehe der inneren Schicht: %f' % (h2))
         fm = opt['finemesh']
         print ('Feine Vernetzung: %f' % (fm))
         cm = opt['coarsemesh']
@@ -479,7 +480,7 @@ for f in files:
         h1 = opt['Hoehe1']
         print ('Hoehe der aeusseren Schichten: %f' % (h1))
         h2 = opt['Hoehe2']
-        print ('Hoehe der inneren Schicht: %f' % (h1))
+        print ('Hoehe der inneren Schicht: %f' % (h2))
         alpha1 = opt['alpha1']
         print ('Winkel der unteren Schicht')
         alpha2 = opt['alpha2']
@@ -503,7 +504,7 @@ for f in files:
         h1 = opt['Hoehe1']
         print ('Hoehe der aeusseren Schichten: %f' % (h1))
         h2 = opt['Hoehe2']
-        print ('Hoehe der inneren Schicht: %f' % (h1))
+        print ('Hoehe der inneren Schicht: %f' % (h2))
         dh1 = opt['dh1']
         print ('Maximale Abweichung der unteren Schicht : %f' % (dh1))
         dh2 = opt['dh2']
@@ -514,7 +515,41 @@ for f in files:
         print ('Grobe Vernetzung: %f' % (cm))
         dh = opt['h_interface']
         print ('Hoehe der Grenzfläche: %f' % (dh))
+
         test = CurvedLaminate(l, h1, h2, dh1, dh2, cm, fm, dh, filename = name)
+    elif opt['Typ'] == 'Perlin':
+        print (opt.keys())
+        name = opt['name']
+        if '.geo' not in name:
+            name = name +'.geo'
+        print ('Dateiname: '+ name)
+        print ('Typ: Perlin-Noise')
+        l = opt['Laenge']
+        print ('Laenge: %f' % (l))
+        h1 = opt['Hoehe1']
+        print ('Hoehe der aeusseren Schichten: %f' % (h1))
+        h2 = opt['Hoehe2']
+        print ('Hoehe der inneren Schicht: %f' % (h1))
+        npoints = opt['npoints']
+        print ('Anzahl der Punkte entlang der Grenzschicht: %f' % (npoints))
+        noct = opt['noct']
+        print ('Anzahl der ueberlagerten Oktaven: %f' % (noct))
+        pers = opt['pers']
+        print ('Einflussfaktor der naechsten Oktave: %f' % (pers))
+        hmax = opt['hmax']
+        print ('Maximale Hoehe der Rauhigkeit: %f' % (hmax))
+        fm = opt['finemesh']
+        print ('Feine Vernetzung: %f' % (fm))
+        cm = opt['coarsemesh']
+        print ('Grobe Vernetzung: %f' % (cm))
+        dh = opt['h_interface']
+        print ('Hoehe der Grenzfläche: %f' % (dh))
+
+        signal1 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+        signal2 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+
+        test = PerlinLaminate(signal1, signal2, h1, h2, cm, fm, dh)
+
 
 with open(name , 'a') as o:
     o.write('Mesh 1;\nMesh 2;\nSave \"' +  opt['name'].split('.')[0]+'.m\";\n' )
