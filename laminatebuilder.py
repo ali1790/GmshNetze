@@ -83,7 +83,7 @@ class Geowriter():
     def createperlin(npoints, l, noct, pers, hmax):
         noct = int(noct)
         ran = int(random.random() * l)
-        x = np.linspace(ran, ran + l, num = npoints)
+        x = np.linspace(ran, ran + l, num = int(npoints))
         signal = np.zeros(int(npoints))
         for ctr, t in enumerate(x):
             signal[ctr] = pnoise1(t, octaves = noct, persistence = pers)
@@ -444,6 +444,39 @@ def choosefiles():
     else:
         return [allfiles[choice - 1]]
 
+def writesignal(s1, s2, name):
+    with open(name, 'w') as O:
+        O.write('#%s   | %s\n' % (s1[1], s2[1]))
+        for i, j in zip(s1[0], s2[0]):
+            O.write('%.10e  %.10e    |   %.10e   %.10e\n' % (i[0], i[1], j[0], j[1]))
+
+def readsignals(name):
+    tmp1 = [[],[]]
+    tmp2 = [[],[]]
+    I = open(name, 'r')
+    lines = I.readlines()
+    header = lines.pop(0).split('|')
+    tmp1[1] = header[0].replace('#','')
+    tmp2[1] = header[1].rstrip()
+    for l in lines:
+        s1 = [float(x) for x in l.split('|')[0].split()]
+        s2 = [float(x) for x in l.split('|')[1].split()]
+        tmp1[0].append(s1)
+        tmp2[0].append(s2)
+    I.close()
+    return tmp1, tmp2
+
+def calcareas(s1, s2, h1, h2):
+    Area1 = 0.0
+    for i in range(len(s1[0])- 1):
+        Area1 += 0.5 * (s1[0][i + 1][0] - s1[0][i][0]) * (s1[0][i][1] + s1[0][i + 1][1] + 2.0 * h1)
+    Area2 = -Area1
+    for i in range(len(s2[0])- 1):
+        Area2 += 0.5 * (s2[0][i + 1][0] - s2[0][i][0]) * (s2[0][i][1] + s2[0][i + 1][1] + 2.0 * (h1 + h2))
+    Area3 = (s1[0][-1][0] - s1[0][0][0]) * (2.0 * h1 + h2) - Area2 - Area1
+    print (Area3)
+    return Area1, Area2, Area3
+
 files = choosefiles()
 for f in files:
     opt = readoptions(f)
@@ -545,10 +578,37 @@ for f in files:
         dh = opt['h_interface']
         print ('Hoehe der Grenzfläche: %f' % (dh))
 
-        signal1 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
-        signal2 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+        if len(glob.glob('*.sig'))==0:
+            print('Keine Signaldatei gefunden. Erzeuge neue Signale.')
+            signal1 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+            print (signal1[1])
+            signal2 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+            print ('Schreibe Signale 1 in %s' % (name.replace('.geo','.sig')))
+            writesignal(signal1, signal2 ,name.replace('.geo','.sig'))
+        else:
+            print ('\n\nEs wurden folgende Dateien mit Perlin-Signalen gefunden:')
+            tmpfiles = glob.glob('*.sig')
+            for i in range(len(tmpfiles)):
+                print('%i:  %s' % (i+1, tmpfiles[i]))
+            print ('Neue erzeugen: n')
+            choice = input('Welche der Dateien soll verwendet werden?')
+            if choice == 'n':
+                print('Erzeuge neue Signale.')
+                signal1 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+                signal2 = Geowriter.createperlin(npoints, l, noct, pers, hmax)
+                print ('Schreibe Signale in %s' % (name.replace('.geo','.sig')))
+                writesignal(signal1, signal2 ,name.replace('.geo','.sig'))
+            else:
+                signal1, signal2 = readsignals(tmpfiles[int(choice) - 1])
+                
 
         test = PerlinLaminate(signal1, signal2, h1, h2, cm, fm, dh)
+        # Berechne Flaechen und Volumenanteile
+        A1, A2, A3 = calcareas(signal1, signal2, h1, h2)
+        print ('Flaeche der unteren Schich: %f' % (A1))
+        print ('Flaeche der mittleren Schich: %f' % (A2))
+        print ('Flaeche der oberen Schich: %f' % (A3))
+        print ('Volumenanteil der mittleren Schicht: %f' % (A2/(A1 + A2 + A3)))
 
 
 with open(name , 'a') as o:
